@@ -1,0 +1,6 @@
+{
+    "sources": {
+        "deno-std": "https://github.com/denoland/deno_std",
+        "jsr": "https://github.com/jsr-io/jsr"
+    }
+}
