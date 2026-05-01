@@ -1,0 +1,21 @@
+{
+    "permissions": {
+        "deny": [
+            "Bash(rm -rf*)",
+            "Bash(git push --force*)"
+        ],
+        "allow": [
+            "Skill(learn)",
+            "Skill(preflight)",
+            "Bash(deno add *)",
+            "Bash(deno fmt*)",
+            "Bash(deno lint*)",
+            "Bash(deno check*)",
+            "Bash(deno test*)",
+            "Bash(deno task*)"
+        ]
+    },
+    "enabledPlugins": {
+        "deno-skills@denoland-skills": true
+    }
+}
