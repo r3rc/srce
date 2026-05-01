@@ -1,0 +1,40 @@
+{
+    "name": "@r3rc/srce",
+    "version": "0.1.0",
+    "license": "MIT",
+    "author": "Renzo A. Rosas <renzo.r3rc@gmail.com> (https://r3rc.dev)",
+    "homepage": "https://r3rc.dev",
+    "repository": "https://github.com/r3rc/srce",
+    "exports": "./src/mod.ts",
+    "tasks": {
+        "tinker": "deno run -A jsr:@r3rc/tinker/cli"
+    },
+    "imports": {
+        "@h3js/h3": "npm:h3@2.0.1-rc.21",
+        "@h3js/srvx": "npm:srvx@0.11.15",
+        "@unjs/citty": "npm:citty@0.2.2"
+    },
+    "compilerOptions": {
+        "noImplicitOverride": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true
+    },
+    "fmt": {
+        "exclude": [".tinker/", ".claude/"],
+        "lineWidth": 120,
+        "indentWidth": 4,
+        "trailingCommas": "never"
+    },
+    "lint": {
+        "rules": {
+            "tags": ["recommended"],
+            "include": ["eqeqeq", "no-throw-literal", "no-sync-fn-in-async-fn"]
+        },
+        "exclude": [".tinker/"]
+    },
+    "test": {
+        "exclude": [".tinker/"]
+    }
+}
