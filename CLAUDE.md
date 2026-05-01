@@ -31,7 +31,9 @@ The `learn` skill consults these clones at `.tinker/sources/` before implementin
 | Source     | Path                        | Domain                                                                                                                             |
 | ---------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `deno-std` | `.tinker/sources/deno-std/` | Deno standard library. Idiomatic TypeScript APIs, streams, async, FS, encoding, CLI patterns, testing.                             |
+| `h3`       | `.tinker/sources/h3/`       | H3 v2 HTTP framework. Routing, request/response helpers, event handlers, middleware patterns, error handling.                      |
 | `jsr`      | `.tinker/sources/jsr/`      | JSR registry. Package metadata format (`meta.json`), version resolution, export maps, import semantics. Used as spec, not as code. |
+| `srvx`     | `.tinker/sources/srvx/`     | srvx runtime adapter. Serving H3 apps on Deno, Bun, and Node. Entry point wiring, port/signal handling.                            |
 
 ## Tooling
 
@@ -69,11 +71,6 @@ All other `deno-skills` guidance applies as written.
   `deno.json` — `deno add` keeps the lockfile in sync.
 - **Memory is not a source.** Verify APIs against actual source code or official documentation before writing against
   them.
-
-## Project memory
-
-Design decisions, architecture notes, and context for ongoing work live in `.claude/memory/`. Read the relevant files
-there at the start of any session involving vpsctl before making design or implementation decisions.
 
 ## Running locally
 
