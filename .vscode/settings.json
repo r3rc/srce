@@ -8,5 +8,5 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
     },
-    "cSpell.words": []
+    "cSpell.words": ["srce"]
 }
