@@ -1,6 +1,8 @@
 {
     "sources": {
         "deno-std": "https://github.com/denoland/deno_std",
-        "jsr": "https://github.com/jsr-io/jsr"
+        "h3": "https://github.com/h3js/h3",
+        "jsr": "https://github.com/jsr-io/jsr",
+        "srvx": "https://github.com/h3js/srvx"
     }
 }
