@@ -11,6 +11,7 @@ export {
 } from "./entities.ts";
 export { buildPackageMeta, computeLatest, normalizePath, validateExports } from "./meta.ts";
 export { createPackageStore, type PackageStore } from "./packages.ts";
+export { PublishError, publishPackage } from "./publish.ts";
 export { createStorage, type Storage } from "./storage.ts";
-export { extractTarball, type TarballContents, TarballError } from "./tarball.ts";
+export { createTarball, extractTarball, type TarballContents, TarballError } from "./tarball.ts";
 export { createTokenStore, type TokenStore } from "./token.ts";
