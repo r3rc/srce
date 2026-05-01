@@ -9,9 +9,13 @@ export interface TokenStore {
     create(description: string, isAdmin: boolean): Promise<string>;
     verify(raw: string): Promise<Token | null>;
     revoke(hash: string): void;
+    list(): Token[];
 }
 
 export function createTokenStore(db: Database): TokenStore {
+    const selectAll = db.prepare<TokenRow>(
+        "SELECT hash, description, is_admin, created_at FROM tokens ORDER BY created_at"
+    );
     const selectByHash = db.prepare<TokenRow>(
         "SELECT hash, description, is_admin, created_at FROM tokens WHERE hash = ?"
     );
@@ -45,7 +49,16 @@ export function createTokenStore(db: Database): TokenStore {
         db.exec("DELETE FROM tokens WHERE hash = ?", hash);
     }
 
-    return { create, verify, revoke };
+    function list(): Token[] {
+        return (selectAll.all() as TokenRow[]).map((r) => ({
+            hash: r.hash,
+            description: r.description,
+            isAdmin: r.is_admin === 1,
+            createdAt: r.created_at
+        }));
+    }
+
+    return { create, verify, revoke, list };
 }
 
 async function _hashToken(raw: string): Promise<string> {
