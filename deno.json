@@ -10,9 +10,16 @@
         "tinker": "deno run -A jsr:@r3rc/tinker/cli"
     },
     "imports": {
+        "@db/sqlite": "jsr:@db/sqlite@^0.13.0",
         "@h3js/h3": "npm:h3@2.0.1-rc.21",
         "@h3js/srvx": "npm:srvx@0.11.15",
-        "@unjs/citty": "npm:citty@0.2.2"
+        "@std/assert": "jsr:@std/assert@^1.0.19",
+        "@std/encoding": "jsr:@std/encoding@^1.0.10",
+        "@std/path": "jsr:@std/path@^1.1.4",
+        "@std/semver": "jsr:@std/semver@^1.0.8",
+        "@std/tar": "jsr:@std/tar@^0.1.10",
+        "@unjs/citty": "npm:citty@0.2.2",
+        "@valibot/valibot": "jsr:@valibot/valibot@^1.3.1"
     },
     "compilerOptions": {
         "noImplicitOverride": true,
