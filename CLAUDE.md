@@ -4,12 +4,12 @@ Private package registry for Deno and Bun with JSR-style imports.
 
 ## Overview
 
-This repository contains two programs:
+This repository contains one program:
 
-- **api** — HTTP server. Handles package storage, file serving (JSR-style), token auth, and publish.
-- **cli** — Consumer CLI. Commands for `serve`, `init`, `publish`, `token`, `list`, `info`, `deprecate`, `login`.
+- **cli** — Single entrypoint (`cli/main.ts`). Commands for `serve`, `init`, `login`, `publish`, `token`, `list`,
+  `info`.
 
-Both share a core library at `src/` and are built with the same toolchain.
+It is backed by a core library at `src/` (business logic) and HTTP handlers at `cli/handlers/` (h3 route wiring).
 
 ## Quality gates
 
@@ -76,14 +76,14 @@ All other `deno-skills` guidance applies as written.
 
 ```sh
 # Initialize a new registry (creates admin token)
-deno task init --data ./data
+srce init --data ./data
 
 # Start the server
-deno task serve --port 4873 --data ./data
+srce serve --port 4873 --data ./data
 
 # Publish a package
 cd my-package
-deno task srce publish
+srce publish
 ```
 
 See [`README.md`](./README.md) for full CLI reference.

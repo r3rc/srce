@@ -6,16 +6,15 @@ Private package registry for Deno and Bun with JSR-style imports.
 
 ## Features
 
-- **JSR-style imports** — `@scope/package@version/file.ts`
-- **Scoped tokens** — Fine-grained access control per scope
-- **Symlinks mode** — Local development without republishing
+- **JSR-style imports** — `@scope/package/version/file.ts`
+- **Token auth** — Admin and publish tokens
 - **Zero external services** — SQLite + filesystem storage
 - **Lightweight** — Minimal dependencies, single entrypoint
 
 ## Installation
 
 ```sh
-deno install -A -n srce jsr:@r3rc/srce/cli
+deno install -A -n srce ./cli/main.ts
 ```
 
 ## Quick Start
@@ -28,7 +27,7 @@ srce init --data ./registry
 srce serve --port 4873 --data ./registry
 
 # Login to registry
-srce login http://localhost:4873 --token <admin-token>
+srce login --registry http://localhost:4873 --token <admin-token>
 
 # Publish a package
 cd my-package
@@ -37,59 +36,48 @@ srce publish
 
 ## CLI Commands
 
-### Server
-
-```sh
-srce serve [options]
-  --port <port>       Port to listen on (default: 4873)
-  --data <dir>        Data directory (default: ./data)
-  --symlinks <dir>    Symlinks directory for local dev
-```
-
 ### Registry Management
 
 ```sh
-srce init [options]
+srce init --data <dir>
+```
+
+### Server
+
+```sh
+srce serve [--port <port>] [--data <dir>]
+  --port <port>       Port to listen on (default: 4873)
   --data <dir>        Data directory (default: ./data)
-```
-
-### Tokens
-
-```sh
-srce token create <name> [options]
-  --scopes <scopes>   Comma-separated scopes (e.g. @r3/*,@internal/*)
-  --admin             Create admin token
-  --data <dir>        Data directory
-
-srce token list [options]
-srce token revoke <id> [options]
-```
-
-### Packages
-
-```sh
-srce list [options]
-  --registry <url>    Registry URL
-
-srce info <@scope/name> [options]
-
-srce publish [options]
-  --registry <url>    Registry URL
-  --token <token>     Auth token
-  --dir <dir>         Package directory (default: .)
-
-srce deprecate <@scope/name@version> <message> [options]
-srce undeprecate <@scope/name@version> [options]
 ```
 
 ### Authentication
 
 ```sh
-srce login <registry> [options]
-  --token <token>     Auth token (or enter interactively)
+srce login --registry <url> --token <token>
+```
 
-srce logout
-srce whoami
+### Publishing
+
+```sh
+srce publish
+```
+
+### Packages
+
+```sh
+srce list
+
+srce info --package <@scope/name>
+```
+
+### Tokens
+
+```sh
+srce token list
+
+srce token create --description <name> [--admin]
+
+srce token revoke --hash <hash>
 ```
 
 ## Importing Packages
@@ -97,7 +85,7 @@ srce whoami
 ### Deno
 
 ```typescript
-import { something } from "http://localhost:4873/@scope/package@1.0.0/mod.ts";
+import { something } from "http://localhost:4873/@scope/package/1.0.0/mod.ts";
 ```
 
 With import map:
@@ -105,7 +93,7 @@ With import map:
 ```json
 {
     "imports": {
-        "@scope/package": "http://localhost:4873/@scope/package@1.0.0/mod.ts"
+        "@scope/package": "http://localhost:4873/@scope/package/1.0.0/mod.ts"
     }
 }
 ```
@@ -127,7 +115,7 @@ import { something } from "@scope/package";
 
 ## Package Structure
 
-Packages need a `package.json` (or `deno.json`) with:
+Packages need a `deno.json` with:
 
 ```json
 {
@@ -142,27 +130,24 @@ Packages need a `package.json` (or `deno.json`) with:
 
 ## API Endpoints
 
-| Method | Endpoint                               | Description          |
-| ------ | -------------------------------------- | -------------------- |
-| GET    | `/@:scope/:name/meta.json`             | Package metadata     |
-| GET    | `/@:scope/:name@:version/*`            | File contents        |
-| GET    | `/api/packages`                        | List all packages    |
-| GET    | `/api/packages/@:scope/:name`          | Package details      |
-| POST   | `/api/publish`                         | Publish package      |
-| PATCH  | `/api/packages/@:scope/:name/:version` | Deprecate version    |
-| DELETE | `/api/packages/@:scope/:name/:version` | Delete version       |
-| GET    | `/api/tokens`                          | List tokens (admin)  |
-| POST   | `/api/tokens`                          | Create token (admin) |
-| DELETE | `/api/tokens/:id`                      | Delete token (admin) |
+| Method | Endpoint                                | Auth  | Description                |
+| ------ | --------------------------------------- | ----- | -------------------------- |
+| GET    | `/@:scope/:name/meta.json`              | —     | Package metadata           |
+| GET    | `/@:scope/:name/:version_meta.json`     | —     | Version metadata           |
+| GET    | `/@:scope/:name/:version/:file`         | —     | File contents              |
+| GET    | `/packages`                             | —     | List packages (`?scope=`)  |
+| GET    | `/packages/@:scope/:name`               | —     | Package details + versions |
+| POST   | `/packages/@:scope/:name/:version/yank` | admin | Yank a version             |
+| POST   | `/publish`                              | token | Publish a tarball          |
+| GET    | `/tokens`                               | admin | List tokens                |
+| POST   | `/tokens`                               | admin | Create token               |
+| DELETE | `/tokens/:hash`                         | admin | Revoke token               |
 
 ## Development
 
 ```sh
-# Install dependencies
-deno install
-
-# Run dev server
-deno task serve
+# Type check
+deno check **/*.ts
 
 # Lint
 deno lint
@@ -170,22 +155,9 @@ deno lint
 # Format
 deno fmt
 
-# Type check
-deno check **/*.ts
-
 # Tests
 deno test --allow-all
 ```
-
-### Symlinks Mode
-
-For local development without republishing:
-
-```sh
-srce serve --symlinks /path/to/packages
-```
-
-Files are served from the symlinks directory, ignoring stored versions.
 
 ## License
 
