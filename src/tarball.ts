@@ -1,4 +1,7 @@
 import { encodeHex } from "@std/encoding/hex";
+import { join } from "@std/path";
+import type { TarStreamInput } from "@std/tar/tar-stream";
+import { TarStream } from "@std/tar/tar-stream";
 import { UntarStream } from "@std/tar/untar-stream";
 import { object, pipe, regex, safeParse, string, unknown } from "@valibot/valibot";
 import type { ExportsMap, Manifest } from "./entities.ts";
@@ -96,6 +99,31 @@ export async function extractTarball(tgz: Uint8Array): Promise<TarballContents> 
     return { files, manifest, exports, scope, name, version };
 }
 
+export async function createTarball(dir: string): Promise<Uint8Array<ArrayBuffer>> {
+    const stream = ReadableStream.from(_walkDir(dir, dir))
+        .pipeThrough(new TarStream())
+        .pipeThrough(new CompressionStream("gzip") as TransformStream<Uint8Array, Uint8Array>);
+    const chunks: Uint8Array[] = [];
+    const reader = stream.getReader();
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+        }
+    } finally {
+        reader.releaseLock();
+    }
+    const total = chunks.reduce((n, c) => n + c.length, 0);
+    const out = new Uint8Array(new ArrayBuffer(total));
+    let offset = 0;
+    for (const chunk of chunks) {
+        out.set(chunk, offset);
+        offset += chunk.length;
+    }
+    return out;
+}
+
 async function _readEntryBytes(stream: ReadableStream<Uint8Array>): Promise<Uint8Array<ArrayBuffer>> {
     const chunks: Uint8Array[] = [];
     const reader = stream.getReader();
@@ -149,4 +177,20 @@ function _parseConfig(raw: Uint8Array): { scope: string; name: string; version: 
         throw new TarballError("deno.json: invalid name format");
     }
     return { scope: match[1], name: match[2], version, exports };
+}
+
+async function* _walkDir(baseDir: string, currentDir: string): AsyncGenerator<TarStreamInput> {
+    for await (const entry of Deno.readDir(currentDir)) {
+        if (entry.name === ".git" || entry.name === "node_modules") continue;
+        const fullPath = join(currentDir, entry.name);
+        const relPath = `.${fullPath.slice(baseDir.length)}`;
+        if (entry.isDirectory) {
+            yield { type: "directory" as const, path: relPath };
+            yield* _walkDir(baseDir, fullPath);
+        } else if (entry.isFile) {
+            const stat = await Deno.stat(fullPath);
+            const file = await Deno.open(fullPath);
+            yield { type: "file" as const, path: relPath, size: stat.size, readable: file.readable };
+        }
+    }
 }
