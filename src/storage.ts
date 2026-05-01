@@ -3,7 +3,7 @@ import type { VersionMeta } from "./entities.ts";
 
 export interface Storage {
     writeFile(scope: string, name: string, version: string, filePath: string, content: Uint8Array): Promise<void>;
-    readFile(scope: string, name: string, version: string, filePath: string): Promise<Uint8Array | null>;
+    readFile(scope: string, name: string, version: string, filePath: string): Promise<Uint8Array<ArrayBuffer> | null>;
     writeVersionMeta(scope: string, name: string, version: string, meta: VersionMeta): Promise<void>;
     readVersionMeta(scope: string, name: string, version: string): Promise<VersionMeta | null>;
 }
@@ -27,10 +27,13 @@ export function createStorage(dataDir: string): Storage {
         name: string,
         version: string,
         filePath: string
-    ): Promise<Uint8Array | null> {
+    ): Promise<Uint8Array<ArrayBuffer> | null> {
         const src = join(_fileDir(dataDir, scope, name, version), filePath.slice(1));
         try {
-            return await Deno.readFile(src);
+            const data = await Deno.readFile(src);
+            const out = new Uint8Array(new ArrayBuffer(data.byteLength));
+            out.set(data);
+            return out;
         } catch (e) {
             if (e instanceof Deno.errors.NotFound) return null;
             throw e;
