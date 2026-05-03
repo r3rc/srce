@@ -161,4 +161,4 @@ deno test --allow-all
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE).
