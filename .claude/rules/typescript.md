@@ -72,17 +72,17 @@ import { encodeHex } from "@std/encoding";
 
 ## Naming
 
-| Elemento          | Convención  | Ejemplo                              |
-| ----------------- | ----------- | ------------------------------------ |
-| Variables         | camelCase   | `packageId`, `isAdmin`               |
-| Constantes        | UPPER_SNAKE | `MAX_RETRIES`, `DEFAULT_PORT`        |
-| Funciones         | camelCase   | `parseManifest`, `createTokenStore`  |
-| Privadas          | \_camelCase | `_generateRaw`, `_hashToken`         |
-| Handlers dominio  | onCamelCase | `onRequest`, `onTokenExpired`        |
-| Clases            | PascalCase  | `TarballError`, `DatabaseError`      |
-| Interfaces        | PascalCase  | `Storage`, `PackageMeta`             |
-| Types             | PascalCase  | `Version`, `Scope`                   |
-| Archivos          | snake_case  | `token_store.ts`, `package_meta.ts`  |
+| Elemento         | Convención  | Ejemplo                             |
+| ---------------- | ----------- | ----------------------------------- |
+| Variables        | camelCase   | `packageId`, `isAdmin`              |
+| Constantes       | UPPER_SNAKE | `MAX_RETRIES`, `DEFAULT_PORT`       |
+| Funciones        | camelCase   | `parseManifest`, `createTokenStore` |
+| Privadas         | \_camelCase | `_generateRaw`, `_hashToken`        |
+| Handlers dominio | onCamelCase | `onRequest`, `onTokenExpired`       |
+| Clases           | PascalCase  | `TarballError`, `DatabaseError`     |
+| Interfaces       | PascalCase  | `Storage`, `PackageMeta`            |
+| Types            | PascalCase  | `Version`, `Scope`                  |
+| Archivos         | snake_case  | `token_store.ts`, `package_meta.ts` |
 
 ## Types vs Interfaces
 
@@ -109,19 +109,19 @@ type Result<T> = T | null;
 export type TokenKind = (typeof TokenKind)[keyof typeof TokenKind];
 export const TokenKind = {
     Admin: "admin",
-    Publish: "publish",
+    Publish: "publish"
 } as const;
 
 // ❌ enum (genera código runtime, incompatible con erasableSyntaxOnly)
 export enum TokenKind {
     Admin = "admin",
-    Publish = "publish",
+    Publish = "publish"
 }
 
 // ❌ const enum (requiere transformación del compilador, no es borrable)
 export const enum TokenKind {
     Admin = "admin",
-    Publish = "publish",
+    Publish = "publish"
 }
 ```
 
@@ -129,13 +129,13 @@ Orden: type primero, const después. El type documenta la intención; el const l
 
 ## Quick Reference
 
-| No usar                                    | Usar                                              |
-| ------------------------------------------ | ------------------------------------------------- |
-| `any`                                      | `unknown` + type guard                            |
-| `x!` (non-null assertion)                  | Check explícito + throw                           |
-| `import { x } from "./mod"`                | `import { x } from "./mod.ts"`                    |
-| `import { encodeHex } from "@std/encoding"` | `import { encodeHex } from "@std/encoding/hex"`  |
-| `require()`                                | `import` (ESM)                                    |
-| `import { type X, value }`                 | Separar: `import type { X }` + `import { value }` |
-| `console.log` en producción                | Logger apropiado o eliminarlo                     |
-| `enum` / `const enum`                      | Const object `as const` + type union              |
+| No usar                                     | Usar                                              |
+| ------------------------------------------- | ------------------------------------------------- |
+| `any`                                       | `unknown` + type guard                            |
+| `x!` (non-null assertion)                   | Check explícito + throw                           |
+| `import { x } from "./mod"`                 | `import { x } from "./mod.ts"`                    |
+| `import { encodeHex } from "@std/encoding"` | `import { encodeHex } from "@std/encoding/hex"`   |
+| `require()`                                 | `import` (ESM)                                    |
+| `import { type X, value }`                  | Separar: `import type { X }` + `import { value }` |
+| `console.log` en producción                 | Logger apropiado o eliminarlo                     |
+| `enum` / `const enum`                       | Const object `as const` + type union              |

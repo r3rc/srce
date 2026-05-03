@@ -29,7 +29,7 @@
         "noImplicitReturns": true
     },
     "fmt": {
-        "exclude": [".tinker/", ".claude/"],
+        "exclude": [".tinker/"],
         "lineWidth": 120,
         "indentWidth": 4,
         "trailingCommas": "never"
