@@ -4,3 +4,6 @@
 
 # Tinker
 .tinker/sources
+
+# Claude Code
+.claude/settings.local.json
